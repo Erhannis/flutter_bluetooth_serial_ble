@@ -44,7 +44,7 @@ public class BluetoothConnectionLE extends BluetoothConnectionBase {
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
-            //System.out.println("connecting...");
+            System.out.println("connecting...");
             connected = Connected.Pending;
             SerialSocket socket = new SerialSocket(ctx, device);
 

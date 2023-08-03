@@ -82,6 +82,13 @@ class FlutterBluetoothSerial {
   Future<bool?> requestEnable() async =>
       await _methodChannel.invokeMethod('requestEnable');
 
+  /// for test
+  Future<void> ensurePermissions() async =>
+      await _methodChannel.invokeMethod("ensurePermissions");
+
+  Future<bool?> isClassicAvailable() async =>
+      await _methodChannel.invokeMethod("isClassicAvailable");
+
   /// Tries to disable Bluetooth interface (if enabled).
   Future<bool?> requestDisable() async =>
       await _methodChannel.invokeMethod('requestDisable');
@@ -258,8 +265,11 @@ class FlutterBluetoothSerial {
       connectToAddress(device.address);
 
   @Deprecated('Use `BluetoothConnection.toAddress(address)` instead')
-  Future<void> connectToAddress(String? address, {ConnectionType type = ConnectionType.AUTO}) => Future(() async {
-        _defaultConnection = await BluetoothConnection.toAddress(address, type: type);
+  Future<void> connectToAddress(String? address,
+          {ConnectionType type = ConnectionType.AUTO}) =>
+      Future(() async {
+        _defaultConnection =
+            await BluetoothConnection.toAddress(address, type: type);
       });
 
   @Deprecated(

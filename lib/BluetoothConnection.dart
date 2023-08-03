@@ -3,8 +3,10 @@ part of flutter_bluetooth_serial_ble;
 enum ConnectionType {
   CLASSIC,
   BLE,
+
   /// Try BT classic, then on failure try BLE
   AUTO,
+
   /// Try BLE, then on failure try BT classic
   AUTO_BUT_TRY_BLE_FIRST
 }
@@ -27,7 +29,6 @@ class BluetoothConnection {
 
   /// This ID identifies real full `BluetoothConenction` object on platform side code.
   final int? _id;
-
   final EventChannel _readChannel;
   late StreamSubscription<Uint8List> _readStreamSubscription;
   late StreamController<Uint8List> _readStreamController;
@@ -65,18 +66,19 @@ class BluetoothConnection {
   }
 
   /// Returns connection to given address.
-  static Future<BluetoothConnection> toAddress(String? address, {ConnectionType type = ConnectionType.AUTO}) async { //DUMMY //THINK Expose bc/ble?
+  static Future<BluetoothConnection> toAddress(String? address,
+      {ConnectionType type = ConnectionType.AUTO}) async {
+    //DUMMY //THINK Expose bc/ble?
     switch (type) {
       case ConnectionType.AUTO:
         try {
           return await toAddressBC(address);
         } catch (e, s) {
-          // Bluetooth classic failed; try BLE
-          return toAddressBLE(address);
+          return toAddressBC(address);
         }
       case ConnectionType.AUTO_BUT_TRY_BLE_FIRST:
         try {
-          return await toAddressBLE(address);
+          return await toAddressBC(address);
         } catch (e, s) {
           // BLE failed; try bluetooth classic
           return toAddressBC(address);
@@ -84,8 +86,15 @@ class BluetoothConnection {
       case ConnectionType.CLASSIC:
         return toAddressBC(address);
       case ConnectionType.BLE:
-        return toAddressBLE(address);
+        return toAddressBC(address);
     }
+  }
+
+  static Future<BluetoothConnection> disconnect() async {
+
+    // Sorry for pseudo-factory, but `factory` keyword disallows `Future`.
+    return BluetoothConnection._consumeConnectionID(
+        await FlutterBluetoothSerial._methodChannel.invokeMethod('disconnect'));
   }
 
   static Future<BluetoothConnection> toAddressBLE(String? address) async {
@@ -93,7 +102,6 @@ class BluetoothConnection {
     return BluetoothConnection._consumeConnectionID(await FlutterBluetoothSerial
         ._methodChannel
         .invokeMethod('connect', {"address": address, "isLE": true}));
-
   }
 
   static Future<BluetoothConnection> toAddressBC(String? address) async {
