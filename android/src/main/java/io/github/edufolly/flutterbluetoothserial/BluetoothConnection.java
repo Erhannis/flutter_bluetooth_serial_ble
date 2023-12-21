@@ -6,9 +6,9 @@ import java.util.UUID;
 public interface BluetoothConnection {
     public boolean isConnected();
     /// Connects to given device by hardware address
-    public void connect(String address, UUID uuid) throws IOException;
+    public void connect(String address, UUID uuid) throws Exception;
     /// Connects to given device by hardware address (default UUID used)
-    public void connect(String address) throws IOException;
+    public void connect(String address) throws Exception;
     /// Disconnects current session (ignore if not connected)
     public void disconnect();
     /// Writes to connected remote device
